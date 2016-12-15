@@ -161,8 +161,62 @@
 						  <!--dropdown jquery init-->
 						  $('select').select2();
 						  $('#subcat_section').hide();
+						  $('#defaultmap').addClass('hidden');
+						  //$('#blanket').removeClass('hidden');
 
             });
+			
+			function post()
+			{
+				var lat=$('#us3-lat').val();
+				var long=$('#us3-lon').val();
+				if(lat=='19.39192749999999' || long=='72.83973170000002')
+				{
+					$("html, body").animate({ scrollTop: 0 }, "slow");
+					 $('#defaultmap').removeClass('hidden');
+				}
+				else
+				{
+					$('#blanket').removeClass('hidden');
+					var name=$('#name').val();
+					var category=$('#category').val();
+					var subcategory=$('#subcategory').val();
+					var newcategory=$('#newcategory').val();
+					var newsubcategory=$('#newsubcategory').val();
+					var address=$('#address').val();
+					var mobile=$('#mobile').val();
+					//var photo = new FormData($("#photo")[0]);
+					var formData = new FormData();
+
+					formData.append('lat', lat);
+					formData.append('long', long);
+					formData.append('category', category);
+					formData.append('subcategory', subcategory);
+					formData.append('newcategory', newcategory);
+					formData.append('newsubcategory', newsubcategory);
+					formData.append('address', address);
+					formData.append('mobile', mobile);
+					formData.append('name', name);
+					 
+					formData.append('photo', document.getElementById("photo").files[0]);
+					$.ajax({
+						type: 'POST',
+						url: 'user_save.php',
+						data: formData,
+						processData: false,
+						contentType: false,
+						success: function(response) {
+							//alert("user registered");
+							location.reload(); 
+							$('#blanket').addClass('hidden');
+							$("html, body").animate({ scrollTop: 0 }, "slow");
+						}
+					});
+				}
+			}
+			
+			 
+			
 
 	</script>
 
@@ -205,12 +259,30 @@
      	body{
 			padding:10px !important;
 		}
+		
+		#blanket {
+		   background-color:#111;
+		   opacity: 0.65;
+		   *background:none;
+		   position:fixed;
+		   z-index: 9001;
+		   top:0px;
+		   left:0px;
+		   width:100%;
+		   height:100%;
+		   background:url(gps.gif) no-repeat;
+		   background-position:50% 50%;
+		}
+		
+		
      </style>
 
   </head>
 
   <body>
+<div id="blanket" class="hidden"></div>
 
+    
     <div class="container">
 
     	<div class="row header">
@@ -223,13 +295,13 @@
 
                 <?php
 
-                	if($_SESSION['defaultlocation']=='1')
+                	/*if($_SESSION['defaultlocation']=='1')
 
-					{
+					{*/
 
 						?>
 
-                         <div class="form-group">
+                         <div class="form-group" id="defaultmap">
 
                     	<label ><span class="label label-warning">Kindly Select location on the map, you can not select default location</span></label>
 
@@ -237,9 +309,9 @@
 
                         <?php
 
-						session_unset('defaultlocation');
+						/*session_unset('defaultlocation');
 
-					}
+					}*/
 
 				?>
 
@@ -397,7 +469,7 @@
 
                         </label>
 
-                        <input type="file" class="form-control" name="photo">
+                        <input type="file" class="form-control" name="photo" id="photo">
 
                     </div>
 
@@ -411,7 +483,7 @@
 
                         </label>
 
-                        <input type="text" class="form-control" name="name" placeholder="eg: Dinesh Suthar Or Haridwar Restaurant" required>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="eg: Dinesh Suthar Or Haridwar Restaurant" required>
 
                     </div>
 
@@ -513,7 +585,7 @@
 
                         </label>
 
-                        <textarea class="form-control" name="address" placeholder="Address of Business" required></textarea>
+                        <textarea class="form-control" name="address" id="address" placeholder="Address of Business" required></textarea>
 
                     </div>
 
@@ -527,7 +599,7 @@
 
                         </label>
 
-                        <input type="text" class="form-control" name="mobile" id="mobile" required onkeypress="return isNumberKey(event)" maxlength="10" min="10">
+                        <input type="number" class="form-control" name="mobile" id="mobile" required onkeypress="return isNumberKey(event)" maxlength="10" min="10" pattern="\d*>
 
                     </div>
 
@@ -535,7 +607,8 @@
 
                     	<div class="row" style="text-align:center !important">
 
-                        	<input type="submit" value="Register" class="btn btn-lg btn-success">
+                        	<input type="button" value="Register" class="btn btn-lg btn-success" onClick="post()">
+                            <!--<button class="btn btn-lg btn-success" onClick="post()">Register</button>-->
 
                         	<input type="reset" value="Reset" class="btn btn-lg btn-warning">
 
