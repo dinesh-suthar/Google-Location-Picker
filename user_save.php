@@ -59,6 +59,6 @@
 		
 		$_SESSION['success']='1';
 		
-		header("Location: index.php");
+		//header("Location: index.php");
 	}
 ?>
